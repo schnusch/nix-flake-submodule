@@ -1,0 +1,19 @@
+on:
+  push:
+jobs:
+  add-new-secret:
+    runs-on: ubuntu-latest
+    steps:
+    - run: git config --global user.name 'github-actions[bot]'
+    - run: git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+    - run: git clone --recursive ${{ github.server_url }}/${{ github.repository }}.git .
+
+    - run: echo 'correcthorsebatterystaple' > secrets/xkcd.txt
+    - run: git -C secrets add xkcd.txt
+    - run: git -C secrets commit -m 'add XKCD password'
+    - run: git -C secrets --no-pager log --all --graph --oneline --stat
+    - run: git -C secrets push origin HEAD:secrets
+
+    - run: git add secrets
+    - run: git commit -m 'update secrets'
+    - run: git --no-pager log --all --graph --oneline --stat
